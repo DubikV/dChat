@@ -1,0 +1,14 @@
+<resources>
+
+    <string name="app_name">dChat</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_exit">Выход</string>
+    <string name="create_chat">Создать чат</string>
+    <string name="connect_chat">Подключиться</string>
+    <string name="wellcome_to_chat">Добро пожаловать в dChat!</string>
+    <string name="enter_text">Введите текст...</string>
+    <string name="server">Сервер</string>
+    <string name="port">Порт</string>
+    <string name="star">★</string>
+
+</resources>
