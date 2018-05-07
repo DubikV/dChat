@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -206,6 +207,8 @@ public class ChatActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.setCanceledOnTouchOutside(false);
         alert.show();
+        alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.colorWhite));
+        alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.colorWhite));
 
     }
 
@@ -213,15 +216,10 @@ public class ChatActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogTheme);
         builder.setTitle(getResources().getString(R.string.enter_server_nickname));
         final View viewInflated = LayoutInflater.from(this).inflate(R.layout.login_activity, null);
-
         final EditText serverET = (EditText) viewInflated.findViewById(R.id.serverAddress);
-
         serverET.setVisibility(isServetChat? View.GONE : View.VISIBLE);
-
         final EditText loginET = (EditText) viewInflated.findViewById(R.id.login);
-
         builder.setView(viewInflated);
-
         builder.setPositiveButton(getResources().getString(R.string.questions_answer_ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -246,6 +244,8 @@ public class ChatActivity extends AppCompatActivity {
         alertQuestion = builder.create();
         alertQuestion.show();
         alertQuestion.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertQuestion.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.colorWhite));
+        alertQuestion.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.colorWhite));
         alertQuestion.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

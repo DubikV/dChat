@@ -20,6 +20,7 @@ public class ChatClient {
     private int dstPort;
     private ChatClientThread chatClientThread;
     private String serverNameID;
+    private String key;
 
 	public ChatClient(ChatActivity activity, String name, String address, int port) {
 		this.activity = activity;
@@ -52,20 +53,26 @@ public class ChatClient {
 
                 while (!goOut) {
                     if (dataInputStream.available() > 0) {
-                        String msgLog = dataInputStream.readUTF();
+                        String encrLog = dataInputStream.readUTF();
 
                         ChatMessage chatMessage = null;
-                        if(msgLog.contains(serverNameID)){
-                            chatMessage = new ChatMessage(serverNameID, msgLog.replace(serverNameID,""), false, true, new Date());
+                        if(encrLog.contains(activity.getString(R.string.id_key))){
+                            key = encrLog.replace(activity.getString(R.string.id_key),"");
+                            continue;
                         }else{
-                            String[] data = msgLog.split(activity.getString(R.string.diviner_message));
-                            String nameUser = data[0];
-                            String message = data[1];
-
-                            if(nameUser.equals(name)) {
-                                chatMessage = new ChatMessage(activity.getString(R.string.user_me), message, true, false, new Date());
+                            String msgLog = Encrypt.dencypt(dataInputStream.readUTF(), key);
+                            if(msgLog.contains(serverNameID)){
+                                chatMessage = new ChatMessage(serverNameID, msgLog.replace(serverNameID,""), false, true, new Date());
                             }else{
-                                chatMessage = new ChatMessage(nameUser, message, false, false, new Date());
+                                String[] data = msgLog.split(activity.getString(R.string.diviner_message));
+                                String nameUser = data[0];
+                                String message = data[1];
+
+                                if(nameUser.equals(name)) {
+                                    chatMessage = new ChatMessage(activity.getString(R.string.user_me), message, true, false, new Date());
+                                }else{
+                                    chatMessage = new ChatMessage(nameUser, message, false, false, new Date());
+                                }
                             }
                         }
 
@@ -140,7 +147,9 @@ public class ChatClient {
 
                     @Override
                     public void run() {
-                        activity.showLoginDialog();
+                        if(!activity.isFinishing()) {
+                            activity.showLoginDialog();
+                        }
                     }
 
                 });

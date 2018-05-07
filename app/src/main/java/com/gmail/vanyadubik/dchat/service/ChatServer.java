@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class ChatServer {
     private ChatActivity activity;
@@ -22,11 +23,13 @@ public class ChatServer {
 	static final int socketServerPORT = 8080;
     private String serverIp;
     private String serverNameID;
+    private String key;
 
 	public ChatServer(ChatActivity activity, String serverIp) {
 		this.activity = activity;
         this.serverIp = serverIp;
         this.serverNameID =  activity.getString(R.string.id_server);
+        this.key = "SomeKey";
 		Thread chatServerThread = new Thread(new ChatServerThread());
         chatServerThread.start();
 	}
@@ -121,7 +124,9 @@ public class ChatServer {
                     }
                 });
 
-                dataOutputStream.writeUTF(serverNameID + activity.getString(R.string.welcome)+" " + n + "");
+                dataOutputStream.writeUTF(activity.getString(R.string.id_key)+ key);
+                dataOutputStream.flush();
+                dataOutputStream.writeUTF(Encrypt.encypt(serverNameID + activity.getString(R.string.welcome)+" " + n + "", key));
                 dataOutputStream.flush();
 
                 broadcastMsg(serverNameID + n + " "+activity.getString(R.string.join_our_chat)+".");
@@ -199,20 +204,9 @@ public class ChatServer {
 
 
     private void broadcastMsg(String msg){
-       // String msgLog = "";
         for(int i=0; i<userList.size(); i++){
-            userList.get(i).chatThread.sendMsg(msg);
-          //  msgLog = "- send to " + userList.get(i).name + "\n";
+            userList.get(i).chatThread.sendMsg(Encrypt.encypt(msg, key));
         }
-
-//        final String finalMsgLog = msgLog;
-//        activity.runOnUiThread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                activity.sendMessage(new ChatMessage("send to", finalMsgLog, false));
-//            }
-//        });
     }
 
     public void destroy(){

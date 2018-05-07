@@ -28,9 +28,8 @@ public class Modules {
             }
 
         } catch (SocketException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
-            ip += "Something Wrong! " + e.toString() + "\n";
+            ip = e.toString();
         }
         return ip;
     }

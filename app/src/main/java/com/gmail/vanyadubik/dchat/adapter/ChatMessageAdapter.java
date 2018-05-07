@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.gmail.vanyadubik.dchat.R;
 import com.gmail.vanyadubik.dchat.model.ChatMessage;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ChatMessageAdapter extends BaseAdapter {
@@ -53,11 +54,14 @@ public class ChatMessageAdapter extends BaseAdapter {
 
 
         TextView textUser = (TextView) view.findViewById(R.id.text_user);
-        textUser.setText(chatMessage.getMessage());
+        textUser.setText((chatMessage.isServer() ?
+                new SimpleDateFormat("HH:mm:ss").format(chatMessage.getDate())+" " : "") +
+                chatMessage.getMessage());
 
         if (!chatMessage.isServer()) {
             TextView nameUser = (TextView) view.findViewById(R.id.name_user);
-            nameUser.setText(chatMessage.getUser());
+            nameUser.setText((chatMessage.isOwn() ? "" : chatMessage.getUser()+", ") +
+                    new SimpleDateFormat("HH:mm:ss").format(chatMessage.getDate()));
         }
 
         return view;

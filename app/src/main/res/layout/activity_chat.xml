@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     tools:context="com.gmail.vanyadubik.dchat.activity.BootActivity">
 
 
@@ -62,6 +63,7 @@
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/enter_mesg_margin"
                 android:layout_weight="6"
+                android:background="@color/colorWhite"
                 app:srcCompat="@drawable/ic_send"/>
 
         </LinearLayout>

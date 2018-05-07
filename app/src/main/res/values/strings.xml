@@ -19,6 +19,7 @@
 
     <string name="diviner_message">/@div@/</string>
     <string name="id_server">/@server@/</string>
+    <string name="id_key">/@key@/</string>
     <string name="user_me">Я</string>
     <string name="connected">подключился</string>
     <string name="chat_started">Запущен чат по адресу</string>

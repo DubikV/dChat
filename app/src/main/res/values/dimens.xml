@@ -3,11 +3,11 @@
     <dimen name="button_boot_margin">16dp</dimen>
     <dimen name="enter_mesg_margin">5dp</dimen>
     <dimen name="mesg_margin">10dp</dimen>
-    <dimen name="mesg_name_margin">3dp</dimen>
+    <dimen name="mesg_name_margin">10dp</dimen>
 
     <dimen name="list_msg_margin">10dp</dimen>
 
-    <dimen name="text_size_small">10dp</dimen>
+    <dimen name="text_size_small">15dp</dimen>
     <dimen name="text_size_medium">20dp</dimen>
     <dimen name="text_size_big">30dp</dimen>
 

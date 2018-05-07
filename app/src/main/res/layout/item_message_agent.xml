@@ -17,28 +17,20 @@
             android:gravity="bottom|right"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/name_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mesg_margin"
+                android:textColor="@color/colorPrimaryDark"
+                android:maxLines="1"
                 android:layout_weight="1"
-                android:background="@drawable/shape_textview"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/name_user"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/mesg_margin"
-                    android:textColor="@color/colorWhite"
-                    android:maxLines="1"
-                    android:textSize="@dimen/text_size_medium"/>
-
-            </LinearLayout>
+                android:textSize="@dimen/text_size_small"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/speech_bubble_nine_patch_agent"
                 android:orientation="horizontal">
