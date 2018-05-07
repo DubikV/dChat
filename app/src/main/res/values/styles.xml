@@ -21,4 +21,8 @@
         <item name="colorControlNormal">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/colorAccent</item>
+    </style>
+
 </resources>

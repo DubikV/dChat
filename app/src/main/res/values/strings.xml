@@ -9,6 +9,25 @@
     <string name="enter_text">Введите текст...</string>
     <string name="server">Сервер</string>
     <string name="port">Порт</string>
+    <string name="login">Логин</string>
     <string name="star">★</string>
+    <string name="enter_server_nickname">Введите никнейм и адрес чата.</string>
+    <string name="error_field_required">Эти данные обязательни</string>
+    <string name="questions_answer_ok">Ок</string>
+    <string name="questions_answer_yes">Да</string>
+    <string name="questions_answer_no">Нет</string>
+
+    <string name="diviner_message">/@div@/</string>
+    <string name="id_server">/@server@/</string>
+    <string name="user_me">Я</string>
+    <string name="connected">подключился</string>
+    <string name="chat_started">Запущен чат по адресу</string>
+    <string name="welcome">Добро пожаловать</string>
+    <string name="join_our_chat">присоединяйтесь к нашему чату</string>
+    <string name="leaved">покинул чат</string>
+    <string name="chat_was_destroyed">Внимание! чат был удален!</string>
+    <string name="living">Я покидаю чат, до свидания.</string>
+    <string name="are_you_shure">Вы уверены что хотите покинуть чат?</string>
+    <string name="are_you_shure_server">При выходе будет удален чат. Продожлить?</string>
 
 </resources>

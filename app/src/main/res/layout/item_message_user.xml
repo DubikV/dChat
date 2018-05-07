@@ -30,7 +30,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/mesg_margin"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
                     android:textSize="@dimen/text_size_medium"/>
 
             </LinearLayout>
@@ -47,7 +47,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/mesg_name_margin"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
+                    android:maxLines="1"
                     android:textSize="@dimen/text_size_medium"/>
 
             </LinearLayout>

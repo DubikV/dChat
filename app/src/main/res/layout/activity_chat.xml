@@ -36,17 +36,35 @@
             android:divider="@null"
             android:dividerHeight="0dp"
             android:layout_gravity="bottom"
+            android:layout_weight="1"
             android:layout_margin="@dimen/list_msg_margin"/>
 
-        <com.gmail.vanyadubik.dchat.ui.widget.DrawableEditText
-            android:id="@+id/send_message"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/enter_mesg_margin"
             android:layout_gravity="bottom"
-            android:hint="@string/enter_text"
-            android:textSize="@dimen/text_size_medium"
-            app:drawableRightCompat="@drawable/ic_send"/>
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/send_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/enter_mesg_margin"
+                android:hint="@string/enter_text"
+                android:layout_weight="1"
+                android:textSize="@dimen/text_size_medium"/>
+
+            <ImageButton
+                android:id="@+id/send_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/enter_mesg_margin"
+                android:layout_weight="6"
+                app:srcCompat="@drawable/ic_send"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

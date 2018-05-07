@@ -2,7 +2,8 @@
 <resources>
     <color name="colorPrimary">#2fbdcf</color>
     <color name="colorPrimaryDark">#147c89</color>
-    <color name="colorAccent">#ffffff</color>
+    <color name="colorAccent">#147c89</color>
+    <color name="colorWhite">#ffffff</color>
 
     <color name="speech_bubble_user">#148968</color>
     <color name="speech_bubble_agent">#189dae</color>

@@ -45,6 +45,8 @@ public class ChatMessageAdapter extends BaseAdapter {
 
         if (chatMessage.isOwn()) {
             view = layoutInflater.inflate(R.layout.item_message_user, parent, false);
+        }else if (chatMessage.isServer()) {
+            view = layoutInflater.inflate(R.layout.item_message_server, parent, false);
         } else {
             view = layoutInflater.inflate(R.layout.item_message_agent, parent, false);
         }
@@ -53,8 +55,10 @@ public class ChatMessageAdapter extends BaseAdapter {
         TextView textUser = (TextView) view.findViewById(R.id.text_user);
         textUser.setText(chatMessage.getMessage());
 
-        TextView nameUser = (TextView) view.findViewById(R.id.name_user);
-        nameUser.setText(chatMessage.getUser());
+        if (!chatMessage.isServer()) {
+            TextView nameUser = (TextView) view.findViewById(R.id.name_user);
+            nameUser.setText(chatMessage.getUser());
+        }
 
         return view;
     }

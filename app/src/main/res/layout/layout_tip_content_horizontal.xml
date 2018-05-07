@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/enter_mesg_margin"
                 android:text="@string/server"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_size_medium"/>
 
             <TextView
@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/enter_mesg_margin"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_size_medium"/>
 
         </LinearLayout>
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/enter_mesg_margin"
                 android:text="@string/port"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_size_medium"/>
 
             <TextView
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/enter_mesg_margin"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_size_medium"/>
 
         </LinearLayout>
@@ -68,7 +68,7 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="10dip"
-        android:background="@color/colorAccent"/>
+        android:background="@color/colorWhite"/>
 
     <ImageButton
         android:id="@+id/buttonMessage"
@@ -77,7 +77,7 @@
         android:layout_margin="@dimen/enter_mesg_margin"
         android:layout_weight="4.5"
         android:background="@null"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/colorWhite"
         app:srcCompat="@drawable/ic_close"/>
 
 </LinearLayout>

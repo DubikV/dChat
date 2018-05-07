@@ -1,60 +1,48 @@
 package com.gmail.vanyadubik.dchat.activity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gmail.vanyadubik.dchat.R;
 import com.gmail.vanyadubik.dchat.adapter.ChatMessageAdapter;
 import com.gmail.vanyadubik.dchat.model.ChatMessage;
+import com.gmail.vanyadubik.dchat.service.ChatClient;
+import com.gmail.vanyadubik.dchat.service.ChatServer;
+import com.gmail.vanyadubik.dchat.service.Modules;
 import com.michael.easydialog.EasyDialog;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
 
     public static final String ACTIVITY_CHAT_PARAM = "activity_chat_param";
 
-    static final int SocketServerPORT = 8080;
-
-   // private TextView infoIp, infoPort, chatMsg;
-    private Spinner spUsers;
-    private ArrayAdapter<ChatClient> spUsersAdapter;
-    private Button btnSentTo;
-
-    private String msgLog = "";
+    private AlertDialog alertQuestion;
 
     private Toolbar toolbar;
     private ListView chtMesgListView;
     private ChatMessageAdapter messageAdapter;
     private EditText editTextSend;
-    private List<ChatClient> userList;
+    private ImageButton buttonSend;
     private List<ChatMessage> chatMessageList;
-    private ServerSocket serverSocket;
+    private ChatServer chatServer;
+    private ChatClient chatClient;
 
     private Boolean isServetChat;
     private String serverIp;
@@ -67,78 +55,14 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-//        infoIp = (TextView) findViewById(R.id.infoip);
-//        infoPort = (TextView) findViewById(R.id.infoport);
-//        chtMesgListView = (ListView) findViewById(R.id.message_list);
-//
-//        spUsers = (Spinner) findViewById(R.id.spusers);
-//        userList = new ArrayList<ChatClient>();
-//        spUsersAdapter = new ArrayAdapter<ChatClient>(
-//                ChatActivity.this, android.R.layout.simple_spinner_item, userList);
-//        spUsersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spUsers.setAdapter(spUsersAdapter);
-//
-//        btnSentTo = (Button)findViewById(R.id.sentto);
-//        btnSentTo.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                ChatClient client = (ChatClient)spUsers.getSelectedItem();
-//                if(client != null){
-//                    String dummyMsg = "Dummy message from server.\n";
-//                    client.chatThread.sendMsg(dummyMsg);
-//                    msgLog += "- Dummy message to " + client.name + "\n";
-//                    chatMsg.setText(msgLog);
-//
-//                }else{
-//                    Toast.makeText(ChatActivity.this, "No user connected", Toast.LENGTH_LONG).show();
-//                }
-//
-//            }
-//        });
-
-//        infoIp.setText(getIpAddress());
-//
-//        ChatServerThread chatServerThread = new ChatServerThread();
-//        chatServerThread.start();
-
         chtMesgListView = (ListView) findViewById(R.id.message_list);
-
-
         editTextSend = (EditText) findViewById(R.id.send_message);
-        editTextSend.setOnTouchListener(new View.OnTouchListener() {
-            final int DRAWABLE_LEFT = 0;
-            final int DRAWABLE_TOP = 1;
-            final int DRAWABLE_RIGHT = 2;
-            final int DRAWABLE_BOTTOM = 3;
+        buttonSend = (ImageButton) findViewById(R.id.send_button);
+        buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    int leftEdgeOfRightDrawable = editTextSend.getRight()
-                            - editTextSend.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width();
-                    if (event.getRawX() >= leftEdgeOfRightDrawable) {
-
-//                        ChatClient client = (ChatClient)spUsers.getSelectedItem();
-//                        if(client != null){
-//                            String dummyMsg = "Dummy message from server.\n";
-//                            client.chatThread.sendMsg(dummyMsg);
-//                            msgLog += "- Dummy message to " + client.name + "\n";
-//                            //chatMsg.setText(msgLog);
-
-                        if(!TextUtils.isEmpty(editTextSend.getText().toString())) {
-                            sendMessage(new ChatMessage("Server", editTextSend.getText().toString(), true));
-                            editTextSend.setText("");
-                        }
-
-//                        }else{
-//                            Toast.makeText(ChatActivity.this, "No user connected", Toast.LENGTH_LONG).show();
-//                        }
-
-                        return true;
-                    }
-                }
-                return false;
+            public void onClick(View v) {
+                chatClient.sendMessage(editTextSend.getText().toString());
+                editTextSend.setText("");
             }
         });
 
@@ -153,7 +77,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        userList = new ArrayList<ChatClient>();
         chatMessageList = new ArrayList<>();
 
         Bundle extras = getIntent().getExtras();
@@ -166,14 +89,13 @@ public class ChatActivity extends AppCompatActivity {
         if (isServetChat) {
             setTitle(getString(R.string.app_name)+" "+getString(R.string.star));
 
-            getIpAddress();
+            serverIp = Modules.getIpAddress();
 
-            ChatServerThread chatServerThread = new ChatServerThread();
-            chatServerThread.start();
+            chatServer = new ChatServer(this, serverIp);
 
         }else{
 
-
+            showLoginDialog();
         }
 
     }
@@ -194,7 +116,7 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_exit) {
-            showSettings();
+            logOUT();
             return true;
         }
 
@@ -213,14 +135,14 @@ public class ChatActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (serverSocket != null) {
-            try {
-                serverSocket.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        if(chatServer!=null){
+            chatServer.destroy();
         }
+
+        if(chatClient!=null){
+            chatClient.disconnect();
+        }
+
     }
 
     private void showSettings(){
@@ -258,236 +180,121 @@ public class ChatActivity extends AppCompatActivity {
         bubbleMessage.show();
     }
 
+    private void logOUT(){
 
-    private class ChatServerThread extends Thread {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogTheme);
+        builder.setTitle(getString(R.string.action_exit));
+        builder.setMessage(isServetChat ? getString(R.string.are_you_shure_server):getString(R.string.are_you_shure));
 
-        @Override
-        public void run() {
-            Socket socket = null;
+        builder.setPositiveButton(getString(R.string.questions_answer_yes), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
 
-            try {
-                serverSocket = new ServerSocket(SocketServerPORT);
-                ChatActivity.this.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        serverPort = serverSocket.getLocalPort();
-                    }
-                });
-
-                while (true) {
-                    socket = serverSocket.accept();
-                    ChatClient client = new ChatClient();
-                    userList.add(client);
-                    ConnectThread connectThread = new ConnectThread(client, socket);
-                    connectThread.start();
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-//                            spUsersAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (socket != null) {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
+                Intent intent = new Intent(ChatActivity.this, BootActivity.class);
+                startActivity(intent);
+                finish();
             }
+        });
 
-        }
-
-    }
-
-
-    private class ConnectThread extends Thread {
-
-        Socket socket;
-        ChatClient connectClient;
-        String msgToSend = "";
-
-        ConnectThread(ChatClient client, Socket socket){
-            connectClient = client;
-            this.socket= socket;
-            client.socket = socket;
-            client.chatThread = this;
-        }
-
-        @Override
-        public void run() {
-            DataInputStream dataInputStream = null;
-            DataOutputStream dataOutputStream = null;
-
-            try {
-                dataInputStream = new DataInputStream(socket.getInputStream());
-                dataOutputStream = new DataOutputStream(socket.getOutputStream());
-
-                final String n = dataInputStream.readUTF();
-
-                connectClient.name = n;
-
-                msgLog += connectClient.name + " connected@" +
-                        connectClient.socket.getInetAddress() +
-                        ":" + connectClient.socket.getPort() + "\n";
-                ChatActivity.this.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        //chatMsg.setText(msgLog);
-                        sendMessage(new ChatMessage("Server", msgLog, false));
-                    }
-                });
-
-                dataOutputStream.writeUTF("Welcome " + n + "\n");
-                dataOutputStream.flush();
-
-                broadcastMsg(n + " join our chat.\n");
-
-                while (true) {
-                    if (dataInputStream.available() > 0) {
-                        final String newMsg = dataInputStream.readUTF();
-
-
-                        msgLog += n + ": " + newMsg;
-                        ChatActivity.this.runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                               // chatMsg.setText(msgLog);
-                                sendMessage(new ChatMessage(n, newMsg, false));
-                            }
-                        });
-
-                        broadcastMsg(n + ": " + newMsg);
-                    }
-
-                    if(!msgToSend.equals("")){
-                        dataOutputStream.writeUTF(msgToSend);
-                        dataOutputStream.flush();
-                        msgToSend = "";
-                    }
-
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (dataInputStream != null) {
-                    try {
-                        dataInputStream.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-
-                if (dataOutputStream != null) {
-                    try {
-                        dataOutputStream.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-
-                userList.remove(connectClient);
-
-                ChatActivity.this.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        spUsersAdapter.notifyDataSetChanged();
-                        Toast.makeText(ChatActivity.this,
-                                connectClient.name + " removed.", Toast.LENGTH_LONG).show();
-
-                        msgLog += "-- " + connectClient.name + " leaved\n";
-                        ChatActivity.this.runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                //chatMsg.setText(msgLog);
-                                sendMessage(new ChatMessage("Server", msgLog, false));
-                            }
-                        });
-
-                        broadcastMsg("-- " + connectClient.name + " leaved\n");
-                    }
-                });
-            }
-
-        }
-
-        private void sendMsg(String msg){
-            msgToSend = msg;
-        }
-
-    }
-
-    private void broadcastMsg(String msg){
-        for(int i=0; i<userList.size(); i++){
-            userList.get(i).chatThread.sendMsg(msg);
-            msgLog += "- send to " + userList.get(i).name + "\n";
-        }
-
-        ChatActivity.this.runOnUiThread(new Runnable() {
-
+        builder.setNegativeButton(getString(R.string.questions_answer_no), new DialogInterface.OnClickListener() {
             @Override
-            public void run() {
-                //chatMsg.setText(msgLog);
-                sendMessage(new ChatMessage("send to", msgLog, false));
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.setCanceledOnTouchOutside(false);
+        alert.show();
+
+    }
+
+    public void showLoginDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogTheme);
+        builder.setTitle(getResources().getString(R.string.enter_server_nickname));
+        final View viewInflated = LayoutInflater.from(this).inflate(R.layout.login_activity, null);
+
+        final EditText serverET = (EditText) viewInflated.findViewById(R.id.serverAddress);
+
+        serverET.setVisibility(isServetChat? View.GONE : View.VISIBLE);
+
+        final EditText loginET = (EditText) viewInflated.findViewById(R.id.login);
+
+        builder.setView(viewInflated);
+
+        builder.setPositiveButton(getResources().getString(R.string.questions_answer_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.setNegativeButton(getResources().getString(R.string.action_exit), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(ChatActivity.this, BootActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        builder.setCancelable(true);
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                finish();
+            }
+        });
+        alertQuestion = builder.create();
+        alertQuestion.show();
+        alertQuestion.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertQuestion.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                boolean cancel = false;
+                View focusView = null;
+
+                if (TextUtils.isEmpty(String.valueOf(serverET.getText()))&&!isServetChat) {
+
+                    serverET.setError(getString(R.string.error_field_required));
+                    focusView = serverET;
+                    cancel = true;
+                }
+
+                if (TextUtils.isEmpty(String.valueOf(loginET.getText()))) {
+
+                    loginET.setError(getString(R.string.error_field_required));
+                    focusView = loginET;
+                    cancel = true;
+                }
+                if (cancel) {
+
+                    focusView.requestFocus();
+
+                } else {
+
+                    alertQuestion.dismiss();
+
+                    chatClient = new ChatClient(ChatActivity.this,
+                            loginET.getText().toString()+(isServetChat ? " "+getString(R.string.star):""),
+                            isServetChat? serverIp:serverET.getText().toString(),
+                            8080);
+
+                }
+
+
+
             }
         });
     }
 
-    private void getIpAddress() {
-        serverIp = "";
-        try {
-            Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
-                    .getNetworkInterfaces();
-            while (enumNetworkInterfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = enumNetworkInterfaces
-                        .nextElement();
-                Enumeration<InetAddress> enumInetAddress = networkInterface
-                        .getInetAddresses();
-                while (enumInetAddress.hasMoreElements()) {
-                    InetAddress inetAddress = enumInetAddress.nextElement();
-
-                    if (inetAddress.isSiteLocalAddress()) {
-                        serverIp += inetAddress.getHostAddress() + "\n";
-                    }
-
-                }
-
-            }
-
-        } catch (SocketException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            Toast.makeText(ChatActivity.this, "Something Wrong! " + e.toString() + "\n", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    class ChatClient {
-        String name;
-        Socket socket;
-        ConnectThread chatThread;
-
-        @Override
-        public String toString() {
-            return name + ": " + socket.getInetAddress().getHostAddress();
-        }
-    }
-
-    private void sendMessage(ChatMessage chatMessage){
+    public void showMessage(ChatMessage chatMessage){
         chatMessageList.add(chatMessage);
         messageAdapter.notifyDataSetChanged();
     }
+
+    public void setPort(int port){
+        serverPort = port;
+    }
+
+
 }

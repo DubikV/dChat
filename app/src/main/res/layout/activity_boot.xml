@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="@string/wellcome_to_chat"
             android:gravity="center"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorWhite"
             android:layout_margin="@dimen/button_boot_margin"
             android:textSize="@dimen/text_size_big"/>
 
@@ -31,7 +31,7 @@
             android:layout_margin="@dimen/button_boot_margin"
             android:text="@string/create_chat"
             android:background="@color/colorPrimaryDark"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_size_medium"/>
 
         <Button
@@ -41,7 +41,7 @@
             android:layout_margin="@dimen/button_boot_margin"
             android:text="@string/connect_chat"
             android:background="@color/colorPrimaryDark"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_size_medium"/>
 
     </LinearLayout>
