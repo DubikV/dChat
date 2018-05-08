@@ -29,7 +29,7 @@ public class ChatServer {
 		this.activity = activity;
         this.serverIp = serverIp;
         this.serverNameID =  activity.getString(R.string.id_server);
-        this.key = "SomeKey";
+        this.key = UUID.randomUUID().toString();
 		Thread chatServerThread = new Thread(new ChatServerThread());
         chatServerThread.start();
 	}

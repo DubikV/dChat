@@ -60,7 +60,7 @@ public class ChatClient {
                             key = encrLog.replace(activity.getString(R.string.id_key),"");
                             continue;
                         }else{
-                            String msgLog = Encrypt.dencypt(dataInputStream.readUTF(), key);
+                            String msgLog = Encrypt.dencypt(encrLog, key);
                             if(msgLog.contains(serverNameID)){
                                 chatMessage = new ChatMessage(serverNameID, msgLog.replace(serverNameID,""), false, true, new Date());
                             }else{
